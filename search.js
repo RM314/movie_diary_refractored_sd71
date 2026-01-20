@@ -1,7 +1,9 @@
 const TMDB_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkNDFlNGQxZDBmY2Y4YmU3ZDU4MTI1ZGE3MWM0MzBiOSIsIm5iZiI6MTc2ODkwNDY1Ny4wODcwMDAxLCJzdWIiOiI2OTZmNTdkMTAzOGNkNjY1ZDNmZTEwZjAiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.wpwcEaMa71ohbIMI5fdgenznKC0tsHSAnq-wu6GJ1Dw";
 const BASE = "https://api.themoviedb.org/3";
 
-async function searchMovie(query, timeoutMs = 3000) {
+const maxSearch = 50;
+
+async function searchMovie(query, timeoutMs) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
 
@@ -23,7 +25,7 @@ async function searchMovie(query, timeoutMs = 3000) {
 
   } catch (err) {
     if (err.name === "AbortError") {
-      throw new Error("Suche abgebrochen (Timeout)");
+      throw new Error("Search stopped (Timeout)");
     }
     throw err;
 
@@ -89,7 +91,7 @@ function createMovieCard(movie) {
 
   const btn = document.createElement("button");
   btn.className =
-    "mt-2 rounded-xl bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-black/90";
+    "mt-2 rounded-xl bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-black/90 active:scale-95";
   btn.textContent = "Details";
   btn.dataset.id = movie.id;
 
@@ -104,12 +106,92 @@ document.getElementById("btn").onclick = async () => {
   const q = document.getElementById("q").value;
   const data = await searchMovie(q,5000);
   document.getElementById("out").textContent =
-    JSON.stringify(data.results.slice(0, 5), null, 2);
+    JSON.stringify(data.results.slice(0, 50), null, 2);
+
 
   const cards=document.getElementById("cards");
-  data.results.slice(0,5).forEach(movie => {
+  cards.innerHTML=""
+  data.results.slice(0,50).forEach(movie => {
     const c=createMovieCard(movie);
     cards.appendChild(c);
   });
 
 };
+
+
+async function fetchMovieDetails(id) {
+  const res = await fetch(
+    `https://api.themoviedb.org/3/movie/${id}?language=en-GB&append_to_response=videos,credits`,
+    {
+      headers: {
+        Authorization: `Bearer ${TMDB_TOKEN}`,
+        Accept: "application/json",
+      },
+    }
+  );
+  if (!res.ok) throw new Error(res.status);
+  return res.json();
+}
+
+function showDetails(movie) {
+  alert(
+    `${movie.title}\n\n` +
+    `Running time: ${movie.runtime} min\n` +
+    `Director: ${movie.credits.crew.find(c => c.job === "Director")?.name}` +
+    movie.overview
+  );
+}
+
+
+const modal = document.getElementById("modal");
+const titleEl = document.getElementById("modal-title");
+const bodyEl  = document.getElementById("modal-body");
+const closeBtn = document.getElementById("modal-close");
+
+function showModal(movie) {
+  titleEl.textContent = movie.title;
+  bodyEl.textContent =
+    `Laufzeit: ${movie.runtime} min\n` +
+    `Bewertung: ${movie.vote_average}` +
+    movie.overview;
+
+  modal.classList.remove("hidden");
+  modal.classList.add("flex");
+}
+
+function hideModal() {
+  modal.classList.add("hidden");
+  modal.classList.remove("flex");
+}
+
+closeBtn.addEventListener("click", hideModal);
+modal.addEventListener("click", (e) => {
+  if (e.target === modal) hideModal(); // Klick auf Overlay
+});
+
+document.getElementById("cards").addEventListener("click", async (e) => {
+  const btn = e.target.closest("button[data-id]");
+  if (!btn) return;
+
+  const movie = await fetchMovieDetails(btn.dataset.id);
+  showModal(movie);
+});
+
+
+function movieDetailsToFavorite(movie) {
+  return {
+    id: movie.id,
+    title: movie.title,
+    release_date: movie.release_date,
+    original_language: movie.original_language,
+    poster_path: movie.poster_path,
+    vote_average: Number(movie.vote_average.toFixed(1)),
+    vote_count: movie.vote_count,
+    adult: movie.adult,
+    overview: movie.overview,
+    runtime: movie.runtime,
+    director: movie.credits?.crew
+      ?.find(c => c.job === "Director")
+      ?.name ?? "—"
+  };
+}

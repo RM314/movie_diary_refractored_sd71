@@ -10,9 +10,26 @@
   <input id="q" placeholder="search movie"
    class="border rounded-xl px-4 py-2 focus:outline-none"
   >
-  <button id="btn"  class="border rounded-xl px-4 py-2 bg-black text-white active:scale-95" >Suchen</button>
+  <button id="btn"  class="border rounded-xl px-4 py-2 bg-black text-white active:scale-95" >Search</button>
 
     <div id="cards" class="grid grid-cols-1 gap-6 md:grid-cols-3"> </div>
+
+    <div id="modal" class="fixed inset-0 hidden items-center justify-center bg-black/50">
+    <div class="w-full max-w-lg rounded-xl bg-white p-6">
+        <h2 id="modal-title" class="text-lg font-semibold"></h2>
+        <p id="modal-body" class="mt-3 text-sm"></p>
+
+        <div class="mt-4 text-right">
+        <button
+            id="modal-close"
+            class="rounded-xl px-4 py-2 bg-black text-white active:scale-95"
+        >
+            close
+        </button>
+        </div>
+    </div>
+    </div>
+
 
     <pre id="out"></pre>
 
