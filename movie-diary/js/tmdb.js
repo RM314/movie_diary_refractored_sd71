@@ -1,4 +1,3 @@
-
 const API_KEY = "d41e4d1d0fcf8be7d58125da71c430b9";
 const BASE = "https://api.themoviedb.org/3";
 const IMG = "https://image.tmdb.org/t/p/w500";
@@ -21,4 +20,3 @@ export function searchMovies(query) {
   const q = encodeURIComponent(query);
   return request(`/search/movie?language=en-US&query=${q}&page=1&include_adult=false`);
 }
-//

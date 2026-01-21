@@ -12,7 +12,6 @@ const searchStatus = document.querySelector("#searchStatus");
 const searchList = document.querySelector("#searchList");
 
 function toast(msg) {
-  // simple feedback (you can improve later)
   alert(msg);
 }
 
