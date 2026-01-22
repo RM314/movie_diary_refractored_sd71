@@ -187,11 +187,27 @@ function movieDetailsToFavorite(movie) {
     poster_path: movie.poster_path,
     vote_average: Number(movie.vote_average.toFixed(1)),
     vote_count: movie.vote_count,
-    adult: movie.adult,
     overview: movie.overview,
     runtime: movie.runtime,
     director: movie.credits?.crew
       ?.find(c => c.job === "Director")
-      ?.name ?? "—"
+      ?.name ?? "—",
+
   };
 }
+
+
+let favorites=[];
+
+function addFavorite(movie) {
+    const fav = movieDetailsToFavorite(movie);
+    if (favorites.some((f) => f.id === fav.id)) return;
+    favorites.push(fav);
+}
+
+function removeFavorite(id) {
+    const i = favorites.findIndex((f) => f.id === Number(id));
+    if (i === -1) return;
+    favorites.splice(i, 1);
+}
+
