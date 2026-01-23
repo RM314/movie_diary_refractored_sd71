@@ -103,26 +103,14 @@ function createMovieCard(movie) {
 
 
 document.getElementById("btn").onclick = async () => {
-  const q = document.getElementById("q").value;
-  const data = await searchMovie(q,5000);
-  document.getElementById("out").textContent =
-    JSON.stringify(data.results.slice(0, 50), null, 2);
-
-
-  const cards=document.getElementById("cards");
-  cards.innerHTML=""
-  data.results.slice(0,50).forEach(movie => {
-    const c=createMovieCard(movie);
-    cards.appendChild(c);
-  });
+  await doRealSearch();
 };
-
 
 async function doRealSearch() {
   const q = document.getElementById("q").value;
   const data = await searchMovie(q,5000);
-  document.getElementById("out").textContent =
-    JSON.stringify(data.results.slice(0, 50), null, 2);
+  //document.getElementById("out").textContent =
+  //  JSON.stringify(data.results.slice(0, 50), null, 2);
 
   const cards=document.getElementById("cards");
   cards.innerHTML=""
@@ -154,7 +142,6 @@ function showDetails(movie) {
     movie.overview
   );
 }
-
 
 const modal = document.getElementById("modal");
 const titleEl = document.getElementById("modal-title");
@@ -243,11 +230,22 @@ input.addEventListener("input", () => {
     return;
   }
 
+  //cards.innerHTML = "";
+  const cards=document.getElementById("cards");
+  cards.innerHTML=""
   clearTimeout(timer);
   timer = setTimeout(() => {
     runSuggest(q);
   }, 1000);
 });
+
+
+input.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    doRealSearch();
+  }
+});
+
 
 async function runSuggest(q) {
   // alten Request abbrechen
@@ -304,6 +302,7 @@ function showSuggest(movies) {
       input.value = m.title;
       hideSuggest();
       // optional: sofortige Suche oder Details öffnen
+      doRealSearch();
     });
 
     suggest.appendChild(item);
