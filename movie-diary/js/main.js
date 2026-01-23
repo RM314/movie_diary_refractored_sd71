@@ -2,14 +2,24 @@ import { fetchPopular, searchMovies } from "./tmdb.js";
 import { addToFavs } from "./storage.js";
 import { movieCard } from "./ui.js";
 
+// ---- start rm
+import { inputEvent, hideSuggest } from "./int_search.js";
+// ----- end rm
+
+
 const popularList = document.querySelector("#popularList");
 const searchForm = document.querySelector("#searchForm");
-const searchInput = document.querySelector("#searchInput");
+export const searchInput = document.querySelector("#searchInput");
 
 const dialog = document.querySelector("#searchDialog");
 const closeDialog = document.querySelector("#closeDialog");
 const searchStatus = document.querySelector("#searchStatus");
 const searchList = document.querySelector("#searchList");
+
+// ---- rm
+export const searchSuggestions = document.getElementById("searchSuggestions");
+
+
 
 function toast(msg) {
   alert(msg);
@@ -28,7 +38,7 @@ function renderMovies(listEl, movies) {
   });
 }
 
-async function initPopular() {
+export async function initPopular() {
   try {
     const data = await fetchPopular();
     renderMovies(popularList, data.results || []);
@@ -39,11 +49,15 @@ async function initPopular() {
   }
 }
 
-closeDialog.addEventListener("click", () => dialog.close());
+//closeDialog.addEventListener("click", () => dialog.close());
+// ------- start rm
+closeDialog.addEventListener("click", () => {
+  dialog.close();
+  initPopular();
+});
 
-searchForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const q = searchInput.value.trim();
+export async function doSubmission() {
+const q = searchInput.value.trim();
 
   searchStatus.textContent = "Searching...";
   searchList.innerHTML = "";
@@ -61,6 +75,31 @@ searchForm.addEventListener("submit", async (e) => {
     searchStatus.textContent = "Search failed. Please try again.";
     console.error(err);
   }
+}
+
+searchForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  doSubmission();
 });
+
+searchInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    doSubmission();
+  }
+});
+
+searchInput.addEventListener("input", () => inputEvent(searchInput,popularList));
+
+// click outside of suggestions or input removes suggestions und brings back popular movies
+document.addEventListener("click", (e) => {
+    if (e.target === searchInput) return;
+    if (searchSuggestions.contains(e.target)) return;
+    hideSuggest();
+});
+
+// ------------ end rm --------
+
+
+
 
 initPopular();
