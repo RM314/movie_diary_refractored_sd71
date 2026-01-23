@@ -223,6 +223,14 @@ let controller = null;
 input.addEventListener("input", () => {
   const q = input.value.trim();
 
+
+  // laufenden Suggest-Request abbrechen
+  if (controller) {
+    controller.abort();
+    controller = null;
+  }
+
+
   // UI sofort leeren/ausblenden wenn zu kurz
   if (q.length < 2) {
     clearTimeout(timer);
@@ -245,7 +253,6 @@ input.addEventListener("keydown", (e) => {
     doRealSearch();
   }
 });
-
 
 async function runSuggest(q) {
   // alten Request abbrechen
