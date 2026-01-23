@@ -115,9 +115,22 @@ document.getElementById("btn").onclick = async () => {
     const c=createMovieCard(movie);
     cards.appendChild(c);
   });
-
 };
 
+
+async function doRealSearch() {
+  const q = document.getElementById("q").value;
+  const data = await searchMovie(q,5000);
+  document.getElementById("out").textContent =
+    JSON.stringify(data.results.slice(0, 50), null, 2);
+
+  const cards=document.getElementById("cards");
+  cards.innerHTML=""
+  data.results.slice(0,50).forEach(movie => {
+    const c=createMovieCard(movie);
+    cards.appendChild(c);
+  });
+}
 
 async function fetchMovieDetails(id) {
   const res = await fetch(
@@ -211,3 +224,119 @@ function removeFavorite(id) {
     favorites.splice(i, 1);
 }
 
+// -----------------------------------------------
+
+const input = document.getElementById("q");
+const suggest = document.getElementById("suggest");
+const IMG_BASE_SMALL = "https://image.tmdb.org/t/p/w92";
+
+let timer = null;
+let controller = null;
+
+input.addEventListener("input", () => {
+  const q = input.value.trim();
+
+  // UI sofort leeren/ausblenden wenn zu kurz
+  if (q.length < 2) {
+    clearTimeout(timer);
+    hideSuggest();
+    return;
+  }
+
+  clearTimeout(timer);
+  timer = setTimeout(() => {
+    runSuggest(q);
+  }, 1000);
+});
+
+async function runSuggest(q) {
+  // alten Request abbrechen
+  if (controller) controller.abort();
+  controller = new AbortController();
+
+  try {
+    const data = await searchMovie2(q, { signal: controller.signal }); // deine TMDB search
+    showSuggest(data.results.slice(0, 6));
+  } catch (err) {
+    if (err.name === "AbortError") return;
+    hideSuggest();
+    console.error(err);
+  }
+}
+
+function showSuggest(movies) {
+  suggest.innerHTML = "";
+
+  for (const m of movies) {
+    const item = document.createElement("button");
+    item.type = "button";
+    item.className =
+      "flex w-full items-center gap-3 px-3 py-2 text-left hover:bg-black/5";
+    item.dataset.id = m.id;
+
+    // Poster
+    if (m.poster_path) {
+      const img = document.createElement("img");
+      img.src = IMG_BASE_SMALL + m.poster_path;
+      img.alt = "";
+      img.className = "h-14 w-10 rounded object-cover bg-black/10";
+      img.loading = "lazy";
+      item.appendChild(img);
+    }
+
+    // Textblock
+    const textWrap = document.createElement("div");
+
+    const title = document.createElement("div");
+    title.className = "text-sm font-medium";
+    title.textContent = m.title;
+
+    const meta = document.createElement("div");
+    meta.className = "text-xs text-black/60";
+    meta.textContent = m.release_date
+      ? m.release_date.slice(0, 4)
+      : "—";
+
+    textWrap.append(title, meta);
+    item.appendChild(textWrap);
+
+    item.addEventListener("click", () => {
+      input.value = m.title;
+      hideSuggest();
+      // optional: sofortige Suche oder Details öffnen
+    });
+
+    suggest.appendChild(item);
+  }
+
+  suggest.classList.remove("hidden");
+}
+
+function hideSuggest() {
+  suggest.classList.add("hidden");
+  suggest.innerHTML = "";
+}
+
+// Optional: Klick außerhalb schließt Dropdown
+document.addEventListener("click", (e) => {
+  if (e.target === input) return;
+  if (suggest.contains(e.target)) return;
+  hideSuggest();
+});
+
+async function searchMovie2(query, { signal } = {}) {
+  const url = new URL("https://api.themoviedb.org/3/search/movie");
+  url.searchParams.set("query", query);
+  url.searchParams.set("language", "de-DE");
+
+  const res = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${TMDB_TOKEN}`,
+      Accept: "application/json",
+    },
+    signal,
+  });
+
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}

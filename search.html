@@ -7,10 +7,21 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 <body>
+
+<!--
   <input id="q" placeholder="search movie"
    class="border rounded-xl px-4 py-2 focus:outline-none"
   >
   <button id="btn"  class="border rounded-xl px-4 py-2 bg-black text-white active:scale-95" >Search</button>
+-->
+
+
+    <div class="relative">
+        <input id="q" placeholder="search movie" class="border rounded-xl px-4 py-2 focus:outline-none" />
+        <button id="btn"  class="border rounded-xl px-4 py-2 bg-black text-white active:scale-95" >Search</button>
+        <div id="suggest" class="absolute left-0 right-0 mt-2 hidden border rounded-xl bg-white"></div>
+    </div>
+
 
     <div id="cards" class="grid grid-cols-1 gap-6 md:grid-cols-3"> </div>
 
