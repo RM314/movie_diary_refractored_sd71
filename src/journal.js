@@ -1,3 +1,4 @@
+import "./style.css";
 import { loadFavs, removeFromFavs, updateNote } from "./storage.js";
 import { posterUrl } from "./tmdb.js";
 
