@@ -17,6 +17,14 @@ export function fetchPopular() {
   return request("/movie/popular?language=en-US&page=1");
 }
 
+export function fetchNowPlaying() {
+  return request("/movie/now_playing?language=en-US&page=1");
+}
+
+export function fetchTrending() {
+  return request("/trending/movie/week?language=en-US");
+}
+
 export function searchMovies(query,{ signal } = {}) {
   const q = encodeURIComponent(query);
   return request(`/search/movie?language=en-US&query=${q}&page=1&include_adult=false`,signal);

@@ -1,63 +1,123 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Movie Diary</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-  </head>
-  <body class="bg-slate-50 text-slate-900">
-    <nav class="bg-white border-b border-slate-200">
-      <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-        <a class="font-bold" href="index.html">Movie Diary</a>
-        <div class="flex gap-4 text-sm">
-          <a class="hover:underline" href="index.html">Home</a>
-          <a class="hover:underline" href="journal.html">Journal</a>
-        </div>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Movie Diary</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            'gowun': ['"Gowun Dodum"', 'sans-serif'],
+          },
+          colors: {
+            'navy': '#264653',
+            'teal': '#2A9D8F',
+            'sand': '#E9C46A',
+            'orange': '#F4A261',
+            'coral': '#E76F51',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * {
+      font-family: 'Gowun Dodum', sans-serif;
+    }
+  </style>
+</head>
+
+<body class="bg-white text-navy font-gowun">
+  <!-- Navigation -->
+  <nav class="mx-4 mt-4">
+    <div class="max-w-7xl mx-auto px-6 py-3 grid grid-cols-3 items-center">
+      <!-- Logo -->
+      <a href="index.html" class="justify-self-start">
+        <img src="./assets/logo_movie_diary.png" alt="Movie Diary Logo" class="h-10">
+      </a>
+
+      <!-- Nav Links -->
+      <div class="flex items-center justify-center gap-6">
+        <a href="index.html" class="text-sm hover:text-teal transition-colors">Home</a>
+        <a href="journal.html" class="text-sm hover:text-teal transition-colors">Journal</a>
       </div>
-    </nav>
 
-    <main class="max-w-6xl mx-auto px-4 py-6">
-      <div class="flex flex-col md:flex-row md:items-end gap-3 justify-between">
-        <div>
-          <h1 class="text-2xl font-bold">Popular Movies</h1>
-          <p class="text-slate-600 text-sm">Browse popular titles or search for any movie.</p>
-        </div>
-
-        <div>
-        <form id="searchForm" class="flex gap-2">
-          <input
-            id="searchInput"
-            class="w-64 rounded-lg border border-slate-300 px-3 py-2 text-sm"
-            placeholder="Search movies..."
-            required
-          />
-          <button class="rounded-lg bg-slate-900 text-white px-4 py-2 text-sm hover:bg-slate-800">
-            Search
-          </button>
+      <!-- Search -->
+      <div class="relative justify-self-end">
+        <form id="searchForm" class="flex">
+          <input id="searchInput"
+            class="w-48 bg-sand border-none rounded px-3 py-2 text-sm text-navy placeholder-navy/60"
+            placeholder="Search Movies" required />
         </form>
-        <div id="searchSuggestions" class="absolute left-0 right-0 mt-2  hidden border rounded-xl bg-white"></div>
+        <div id="searchSuggestions"
+          class="absolute left-0 right-0 mt-2 hidden border border-navy rounded-md bg-white z-50"></div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-7xl mx-auto px-4 py-6">
+    <!-- Hero Carousel Section -->
+    <section class="mt-6 mb-10">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-2xl font-bold text-navy">Now Playing</h2>
+        <div class="flex gap-2">
+          <button id="carouselPrev"
+            class="w-10 h-10 rounded-full bg-navy text-white flex items-center justify-center hover:bg-teal transition-colors">
+            <
+          </button>
+          <button id="carouselNext"
+            class="w-10 h-10 rounded-full bg-navy text-white flex items-center justify-center hover:bg-teal transition-colors">
+            >
+          </button>
         </div>
       </div>
 
-      <section class="mt-6">
-        <ul id="popularList" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"></ul>
-      </section>
-    </main>
-
-    <dialog id="searchDialog" class="rounded-xl p-0 w-[min(900px,95vw)]">
-      <div class="bg-white">
-        <div class="p-4 border-b border-slate-200 flex items-center justify-between">
-          <h2 class="font-semibold">Search results</h2>
-          <button id="closeDialog" class="text-sm underline">Close</button>
+      <div class="relative overflow-hidden rounded-xl">
+        <div id="heroCarousel" class="carousel-container flex gap-4 overflow-x-auto">
+          <!-- Carousel items will be inserted here -->
         </div>
-        <div class="p-4">
-          <p id="searchStatus" class="text-sm text-slate-600 mb-3"></p>
-          <ul id="searchList" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"></ul>
+        <!-- Carousel Indicators -->
+        <div id="carouselIndicators" class="flex justify-center gap-2 mt-4">
+          <!-- Indicators will be inserted here -->
         </div>
       </div>
-    </dialog>
+    </section>
 
-    <script type="module" src="./js/main.js"></script>
-  </body>
+    <!-- Popular Movies Section -->
+    <section>
+      <div class="flex flex-col md:flex-row md:items-end gap-3 justify-between mb-6">
+        <div>
+          <h1 class="text-2xl font-bold text-navy">Popular Movies</h1>
+          <p class="text-navy/70 text-sm">Browse popular titles or search for any movie.</p>
+        </div>
+      </div>
+
+      <ul id="popularList" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"></ul>
+    </section>
+  </main>
+
+  <!-- Search Dialog -->
+  <dialog id="searchDialog" class="rounded-xl p-0 w-[min(900px,95vw)] border-2 border-navy">
+    <div class="bg-white">
+      <div class="p-4 border-b border-navy/20 flex items-center justify-between bg-teal/10">
+        <h2 class="font-semibold text-navy">Search results</h2>
+        <button id="closeDialog" class="text-sm text-coral hover:text-coral/80 underline">Close</button>
+      </div>
+      <div class="p-4">
+        <p id="searchStatus" class="text-sm text-navy/70 mb-3"></p>
+        <ul id="searchList" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"></ul>
+      </div>
+    </div>
+  </dialog>
+
+  <script type="module" src="./js/main.js"></script>
+</body>
+
 </html>
