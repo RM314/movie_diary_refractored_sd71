@@ -1,3 +1,4 @@
+// import required helpers
 import { fetchPopular, searchMovies } from "./tmdb.js";
 import { addToFavs } from "./storage.js";
 import { movieCard } from "./ui.js";
@@ -6,7 +7,7 @@ import { movieCard } from "./ui.js";
 import { inputEvent, hideSuggest } from "./int_search.js";
 // ----- end rm
 
-
+// get HTML elements
 const popularList = document.querySelector("#popularList");
 const searchForm = document.querySelector("#searchForm");
 export const searchInput = document.querySelector("#searchInput");
@@ -25,12 +26,18 @@ function toast(msg) {
   alert(msg);
 }
 
+// render movies into a list
 function renderMovies(listEl, movies) {
+  // clear old content
   listEl.innerHTML = "";
+
+  // loop through movies
   movies.forEach((m) => {
     const card = movieCard(m, {
+  // when favourite button clicked
       onFavClick: (movie) => {
         const result = addToFavs(movie);
+  // to show success or duplicate message
         toast(result.ok ? "Added to favourites!" : "Already in favourites.");
       },
     });
@@ -54,11 +61,14 @@ export async function initPopular() {
 closeDialog.addEventListener("click", () => {
   dialog.close();
   initPopular();
-});
+}); 
 
 export async function doSubmission() {
+
+  // Get search text
 const q = searchInput.value.trim();
 
+// prepare dialog
   searchStatus.textContent = "Searching...";
   searchList.innerHTML = "";
   dialog.showModal();
@@ -66,10 +76,13 @@ const q = searchInput.value.trim();
   try {
     const data = await searchMovies(q);
     const results = data.results || [];
+
+    // show search result count
     searchStatus.textContent = results.length
       ? `Found ${results.length} results for "${q}".`
       : `No results found for "${q}".`;
 
+// render search results
     renderMovies(searchList, results);
   } catch (err) {
     searchStatus.textContent = "Search failed. Please try again.";
@@ -100,6 +113,5 @@ document.addEventListener("click", (e) => {
 // ------------ end rm --------
 
 
-
-
+// start app
 initPopular();
