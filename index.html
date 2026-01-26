@@ -37,23 +37,23 @@
 <body class="bg-white text-navy font-gowun">
   <!-- Navigation -->
   <nav class="mx-4 mt-4">
-    <div class="max-w-7xl mx-auto px-6 py-3 grid grid-cols-3 items-center">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
       <!-- Logo -->
-      <a href="index.html" class="justify-self-start">
-        <img src="./assets/logo_movie_diary.png" alt="Movie Diary Logo" class="h-10">
+      <a href="index.html" class="flex-shrink-0">
+        <img src="./assets/logo_movie_diary.png" alt="Movie Diary Logo" class="h-8 sm:h-10">
       </a>
 
       <!-- Nav Links -->
-      <div class="flex items-center justify-center gap-6">
+      <div class="flex items-center gap-4 sm:gap-6 order-last sm:order-none w-full sm:w-auto justify-center">
         <a href="index.html" class="text-sm hover:text-teal transition-colors">Home</a>
         <a href="journal.html" class="text-sm hover:text-teal transition-colors">Journal</a>
       </div>
 
       <!-- Search -->
-      <div class="relative justify-self-end">
+      <div class="relative flex-shrink">
         <form id="searchForm" class="flex">
           <input id="searchInput"
-            class="w-48 bg-sand border-none rounded px-3 py-2 text-sm text-navy placeholder-navy/60"
+            class="w-32 sm:w-48 min-w-[100px] bg-sand border-none rounded px-3 py-2 text-sm text-navy placeholder-navy/60"
             placeholder="Search Movies" required />
         </form>
         <div id="searchSuggestions"
