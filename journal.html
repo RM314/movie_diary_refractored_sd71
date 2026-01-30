@@ -4,23 +4,40 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Journal | Movie Diary</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Preconnect -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Gowun Dodum Font -->
     <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
-    <style>
-      :root {
-        --navy: #264653;
-        --teal: #2A9D8F;
-        --sand: #E9C46A;
-        --orange: #F4A261;
-        --coral: #E76F51;
+    <!-- Tailwind Configuration -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            // Custom font family
+            fontFamily: {
+              'gowun': ['"Gowun Dodum"', 'sans-serif'],
+            },
+            // Custom color palette
+            colors: {
+              'navy': '#264653',
+              'teal': '#2A9D8F',
+              'sand': '#E9C46A',
+              'orange': '#F4A261',
+              'coral': '#E76F51',
+            }
+          }
+        }
       }
-
-      * {
-        font-family: 'Gowun Dodum', sans-serif;
-      }
-    </style>
+    </script>
+      <!-- Global Font Style -->
+      <style>
+        * {
+          font-family: 'Gowun Dodum', sans-serif;
+        }
+      </style>
   </head>
   <body class="bg-white text-navy">
     <!-- Navigation -->
