@@ -20,6 +20,7 @@
 </head>
 
 <body class="bg-white text-navy font-gowun">
+
   <!-- Navigation -->
   <nav class="mx-4 mt-4">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
@@ -29,21 +30,60 @@
       </a>
 
       <!-- Nav Links -->
-      <div class="flex items-center gap-4 sm:gap-6 order-last sm:order-none w-full sm:w-auto justify-center">
+<!-- ############################################################################## -->
+      <div class="hidden sm:flex items-center gap-6 order-last sm:order-none w-full sm:w-auto justify-center">
+<!-- ############################################################################## -->
         <a href="index.html" class="text-sm hover:text-teal transition-colors">Home</a>
         <a href="journal.html" class="text-sm hover:text-teal transition-colors">Journal</a>
       </div>
 
       <!-- Search -->
       <div class="relative flex-shrink">
-        <form id="searchForm" class="flex">
+        <form id="searchForm" class="flex gap-4">
           <input id="searchInput"
             class="w-32 sm:w-48 min-w-[100px] bg-sand border-none rounded px-3 py-2 text-sm text-navy placeholder-navy/60"
             placeholder="Search Movies" required />
+            <button class="rounded-lg bg-slate-900 text-white px-4 py-2 text-sm hover:bg-slate-800">
+            Search
+            </button>
+            <!--
+          <button class="rounded-lg bg-slate-900 text-white px-4 py-2 text-sm hover:bg-slate-800">
+            Search
+          </button>
+        -->
         </form>
         <div id="searchSuggestions"
           class="absolute left-0 right-0 mt-2 hidden border border-navy rounded-md bg-white z-50"></div>
       </div>
+
+<!-- ############################################################################## -->
+    <!-- Burger (nur Mobile) -->
+    <button
+      id="burgerBtn"
+      class="sm:hidden inline-flex items-center justify-center rounded-md p-2 hover:bg-sand"
+      type="button"
+    >
+      <!-- simple icon -->
+      <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </button>
+<!-- ############################################################################## -->
+
+    <!-- ############################################################################## -->
+    <!-- Mobile Dropdown Menu  -->
+    <div
+      id="mobileMenu"
+      class="hidden sm:hidden w-full order-last border-t border-navy/20 pt-3"
+    >
+      <div class="flex flex-col gap-2">
+        <a href="index.html" class="py-2 text-sm hover:text-teal transition-colors">Home</a>
+        <a href="journal.html" class="py-2 text-sm hover:text-teal transition-colors">Journal</a>
+      </div>
+    </div>
+    <!-- ############################################################################## -->
+
+
     </div>
   </nav>
 
