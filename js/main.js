@@ -2,10 +2,8 @@ import { fetchPopular, searchMovies, fetchNowPlaying } from "./tmdb.js";
 import { addToFavs } from "./storage.js";
 import { movieCard, heroCarouselItem } from "./ui.js";
 
-// ---- start rm
+// Suggestions/search helpers
 import { inputEvent, hideSuggest } from "./int_search.js";
-// ----- end rm
-
 
 const popularList = document.querySelector("#popularList");
 const searchForm = document.querySelector("#searchForm");
@@ -26,114 +24,160 @@ let currentSlide = 0;
 let totalSlides = 0;
 let autoSlideInterval = null;
 
-// ---- rm
+// Suggestions container
 export const searchSuggestions = document.getElementById("searchSuggestions");
-
-
 
 function toast(msg) {
   alert(msg);
 }
 
-function renderMovies(listEl, movies) {
-  listEl.innerHTML = "";
-  movies.forEach((m) => {
-    const card = movieCard(m, {
+ // Render movie cards into listEl.
+ // Empty state uses a tag that matches either existing children or the container type.
+ 
+function renderMovies(listEl, movies, emptyMsg = "No movies found.") {
+  if (!listEl) return;
+
+  const items = Array.isArray(movies) ? movies : [];
+
+  const createItemNode = () => {
+    // If cards already exist, match their tag to avoid invalid mismatch
+    const existingTag = listEl.firstElementChild?.tagName;
+    if (existingTag) return document.createElement(existingTag);
+
+    // Otherwise infer from container type
+    const containerTag = listEl.tagName;
+    if (containerTag === "UL" || containerTag === "OL") return document.createElement("li");
+    return document.createElement("div");
+  };
+
+  if (items.length === 0) {
+    const emptyNode = createItemNode();
+    emptyNode.className = "text-sm text-slate-600 py-2";
+    emptyNode.textContent = emptyMsg;
+
+    listEl.replaceChildren(emptyNode);
+    return;
+  }
+
+  const nodes = items.map((m) =>
+    movieCard(m, {
       onFavClick: (movie) => {
         const result = addToFavs(movie);
-        if (!result.ok) {
-          toast("Already in favourites.");
-        }
-        return result;
+        toast(result.ok ? "Added to favourites!" : "Already in favourites.");
       },
-    });
-    listEl.appendChild(card);
-  });
+    })
+  );
+
+  listEl.replaceChildren(...nodes);
 }
 
 export async function initPopular() {
   try {
     const data = await fetchPopular();
-    renderMovies(popularList, data.results || []);
+    renderMovies(popularList, data?.results ?? [], "No popular movies found.");
   } catch (e) {
-    popularList.innerHTML =
-      `<li class="text-sm text-red-600">Failed to load popular movies.</li>`;
+    renderMovies(popularList, [], "Failed to load popular movies.");
     console.error(e);
   }
 }
 
-//closeDialog.addEventListener("click", () => dialog.close());
-// ------- start rm
-closeDialog.addEventListener("click", () => {
-  dialog.close();
-  initPopular();
-});
-
 export async function doSubmission() {
-const q = searchInput.value.trim();
+  if (!dialog || !searchList || !searchStatus || !searchInput) return;
+
+  const q = searchInput.value.trim();
+
+  // Open dialog and clear previous results safely
+  dialog.showModal();
+  searchStatus.textContent = "";
+  searchList.replaceChildren();
+
+  // Prevent searching for empty string
+  if (!q) {
+    searchStatus.textContent = "Type something to search.";
+    // Keep list empty (no "No movies found" on blank)
+    return;
+  }
 
   searchStatus.textContent = "Searching...";
-  searchList.innerHTML = "";
-  dialog.showModal();
 
   try {
     const data = await searchMovies(q);
-    const results = data.results || [];
+    const results = Array.isArray(data?.results) ? data.results : [];
+
     searchStatus.textContent = results.length
       ? `Found ${results.length} results for "${q}".`
       : `No results found for "${q}".`;
 
-    renderMovies(searchList, results);
+    renderMovies(searchList, results, `No results found for "${q}".`);
   } catch (err) {
     searchStatus.textContent = "Search failed. Please try again.";
+    renderMovies(searchList, [], "Search failed.");
     console.error(err);
   }
 }
 
-searchForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  doSubmission();
-});
+// Event listeners
 
-searchInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
+if (closeDialog && dialog) {
+  closeDialog.addEventListener("click", () => {
+    dialog.close();
+    // Return to popular list when closing
+    initPopular();
+  });
+}
+
+if (searchForm) {
+  searchForm.addEventListener("submit", (e) => {
+    e.preventDefault();
     doSubmission();
-  }
-});
+  });
+}
 
-searchInput.addEventListener("input", () => inputEvent(searchInput,popularList));
+// Note: Removed keydown Enter handler; form submit already covers Enter.
+// Double-binding can overwrite results.
 
-// click outside of suggestions or input removes suggestions und brings back popular movies
+// update suggestions + popular list
+if (searchInput) {
+  searchInput.addEventListener("input", () => {
+    inputEvent(searchInput, popularList);
+  });
+}
+
+// Click outside suggestions hides suggestions and restores popular movies
 document.addEventListener("click", (e) => {
-    if (e.target === searchInput) return;
-    if (searchSuggestions.contains(e.target)) return;
-    hideSuggest();
+  if (!searchInput || !searchSuggestions) return;
+  if (e.target === searchInput) return;
+  if (searchSuggestions.contains(e.target)) return;
+  hideSuggest();
 });
 
-// ------------ end rm --------
+// ---- Hero Carousel Functions
 
-// Hero Carousel Functions
 function goToSlide(index) {
+  if (!heroCarousel || totalSlides === 0) return;
+
   if (index < 0) index = totalSlides - 1;
   if (index >= totalSlides) index = 0;
   currentSlide = index;
-  
-  const slideWidth = heroCarousel.querySelector('.carousel-item')?.offsetWidth || 0;
-  heroCarousel.scrollTo({ left: slideWidth * currentSlide, behavior: 'smooth' });
-  
+
+  const slideWidth = heroCarousel.querySelector(".carousel-item")?.offsetWidth || 0;
+  heroCarousel.scrollTo({ left: slideWidth * currentSlide, behavior: "smooth" });
+
   // Update indicators
-  const indicators = carouselIndicators.querySelectorAll('button');
-  indicators.forEach((ind, i) => {
-    ind.classList.toggle('bg-sand', i === currentSlide);
-    ind.classList.toggle('bg-navy/30', i !== currentSlide);
-  });
+  if (carouselIndicators) {
+    const indicators = carouselIndicators.querySelectorAll("button");
+    indicators.forEach((ind, i) => {
+      ind.classList.toggle("bg-sand", i === currentSlide);
+      ind.classList.toggle("bg-navy/30", i !== currentSlide);
+    });
+  }
 }
 
 function startAutoSlide() {
   stopAutoSlide();
   autoSlideInterval = setInterval(() => {
     goToSlide(currentSlide + 1);
-  }, 5000); // Change slide every 5 seconds
+  }, 5000);
 }
 
 function stopAutoSlide() {
@@ -144,57 +188,66 @@ function stopAutoSlide() {
 }
 
 async function initHeroCarousel() {
+  if (!heroCarousel || !carouselIndicators) return;
+
   try {
     const data = await fetchNowPlaying();
-    const movies = (data.results || []).slice(0, 5); // Limit to 5 movies
+    const movies = (data?.results ?? []).slice(0, 5);
     totalSlides = movies.length;
-    
-    heroCarousel.innerHTML = '';
-    carouselIndicators.innerHTML = '';
-    
+    currentSlide = 0;
+
+    heroCarousel.replaceChildren();
+    carouselIndicators.replaceChildren();
+
+    if (totalSlides === 0) {
+      heroCarousel.innerHTML = `<div class="text-sm text-slate-600 p-4">No movies available for carousel.</div>`;
+      return;
+    }
+
     movies.forEach((movie, index) => {
       const item = heroCarouselItem(movie, {
         onFavClick: (m) => {
           const result = addToFavs(m);
-          if (!result.ok) {
-            toast("Already in favourites.");
-          }
+          if (!result.ok) toast("Already in favourites.");
           return result;
-        }
+        },
       });
       heroCarousel.appendChild(item);
-      
-      // Create indicator
-      const indicator = document.createElement('button');
-      indicator.className = `w-3 h-3 rounded-full transition-colors ${index === 0 ? 'bg-sand' : 'bg-navy/30'}`;
-      indicator.addEventListener('click', () => {
+
+      const indicator = document.createElement("button");
+      indicator.className = `w-3 h-3 rounded-full transition-colors ${
+        index === 0 ? "bg-sand" : "bg-navy/30"
+      }`;
+      indicator.addEventListener("click", () => {
         goToSlide(index);
         stopAutoSlide();
         startAutoSlide();
       });
       carouselIndicators.appendChild(indicator);
     });
-    
-    // Set up navigation buttons
-    carouselPrev.addEventListener('click', () => {
-      goToSlide(currentSlide - 1);
-      stopAutoSlide();
-      startAutoSlide();
-    });
-    
-    carouselNext.addEventListener('click', () => {
-      goToSlide(currentSlide + 1);
-      stopAutoSlide();
-      startAutoSlide();
-    });
-    
-    // Start auto-slide
+
+    // Navigation buttons
+    if (carouselPrev) {
+      carouselPrev.addEventListener("click", () => {
+        goToSlide(currentSlide - 1);
+        stopAutoSlide();
+        startAutoSlide();
+      });
+    }
+
+    if (carouselNext) {
+      carouselNext.addEventListener("click", () => {
+        goToSlide(currentSlide + 1);
+        stopAutoSlide();
+        startAutoSlide();
+      });
+    }
+
+    // Auto slide + pause on hover
     startAutoSlide();
-    
-    // Pause on hover
-    heroCarousel.addEventListener('mouseenter', stopAutoSlide);
-    heroCarousel.addEventListener('mouseleave', startAutoSlide);
-    
+
+    heroCarousel.addEventListener("mouseenter", stopAutoSlide);
+    heroCarousel.addEventListener("mouseleave", startAutoSlide);
   } catch (e) {
     heroCarousel.innerHTML = `<div class="text-sm text-coral p-4">Failed to load carousel.</div>`;
     console.error(e);

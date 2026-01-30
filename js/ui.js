@@ -12,7 +12,7 @@ export function movieCard(movie, { onFavClick, favLabel = "Add to favourites" } 
     "rounded-xl border-2 border-navy bg-white shadow-sm overflow-hidden flex flex-col hover:shadow-lg transition-shadow";
 
   const img = document.createElement("img");
-  img.className = "w-full h-64 object-cover bg-teal/10";
+  img.className = "w-full h-100 object-cover bg-teal/10";
   img.alt = movie.title || "Movie poster";
   img.src = posterUrl(movie.poster_path) || "";
   li.appendChild(img);

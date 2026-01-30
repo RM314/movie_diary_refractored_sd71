@@ -107,3 +107,4 @@ function hideSuggest() {
     searchSuggestions.innerHTML = "";
     initPopular();
 }
+
