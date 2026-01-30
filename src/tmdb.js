@@ -8,7 +8,7 @@ export function posterUrl(path) {
 
 async function request(path, { signal } = {}) {
   //const res = await fetch(`${BASE}${path}${path.includes("?") ? "&" : "?"}api_key=${API_KEY}`);
-  const res = await fetch(`${BASE}${path}${path.includes("?") ? "&" : "?"}api_key=${API_KEY}`,signal);
+  const res = await fetch(`${BASE}${path}${path.includes("?") ? "&" : "?"}api_key=${API_KEY}`, { signal });
   if (!res.ok) throw new Error(`TMDB error: ${res.status}`);
   return res.json();
 }

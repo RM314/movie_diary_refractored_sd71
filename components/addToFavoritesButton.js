@@ -1,4 +1,4 @@
-import { loadFavs } from "../js/storage.js";
+import { loadFavs } from "../src/storage.js";
 
 function isInFavourites(movieId) {
     const favs = loadFavs();

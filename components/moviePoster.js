@@ -1,4 +1,4 @@
-import { posterUrl } from "../js/tmdb.js";
+import { posterUrl } from "../src/tmdb.js";
 
 function moviePoster(title, posterPath, { width = "w-full" } = {}) {
 
