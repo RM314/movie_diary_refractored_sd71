@@ -2,8 +2,9 @@ import { fetchPopular, searchMovies, fetchNowPlaying } from "./tmdb.js";
 import { addToFavs } from "./storage.js";
 import { movieCard, heroCarouselItem } from "./ui.js";
 
-// Suggestions/search helpers
+// ---- start rm
 import { inputEvent, hideSuggest } from "./int_search.js";
+// ---- end rm
 
 const popularList = document.querySelector("#popularList");
 const searchForm = document.querySelector("#searchForm");
@@ -24,15 +25,16 @@ let currentSlide = 0;
 let totalSlides = 0;
 let autoSlideInterval = null;
 
-// Suggestions container
+// ---- rm
 export const searchSuggestions = document.getElementById("searchSuggestions");
 
 function toast(msg) {
   alert(msg);
 }
 
- // Render movie cards into listEl.
- // Empty state uses a tag that matches either existing children or the container type.
+
+// Render movie cards into listEl.
+// - Empty state uses a tag that matches either existing children or the container type.
  
 function renderMovies(listEl, movies, emptyMsg = "No movies found.") {
   if (!listEl) return;
@@ -40,11 +42,11 @@ function renderMovies(listEl, movies, emptyMsg = "No movies found.") {
   const items = Array.isArray(movies) ? movies : [];
 
   const createItemNode = () => {
-    // If cards already exist, match their tag to avoid invalid mismatch
+    // If cards already exist, match their tag to avoid invalid mismatches
     const existingTag = listEl.firstElementChild?.tagName;
     if (existingTag) return document.createElement(existingTag);
 
-    // Otherwise infer from container type
+    // Otherwise take from container type
     const containerTag = listEl.tagName;
     if (containerTag === "UL" || containerTag === "OL") return document.createElement("li");
     return document.createElement("div");
@@ -80,6 +82,7 @@ export async function initPopular() {
     console.error(e);
   }
 }
+// ------- start rm
 
 export async function doSubmission() {
   if (!dialog || !searchList || !searchStatus || !searchInput) return;
@@ -116,7 +119,7 @@ export async function doSubmission() {
   }
 }
 
-// Event listeners
+// --- Event listeners
 
 if (closeDialog && dialog) {
   closeDialog.addEventListener("click", () => {
@@ -133,17 +136,16 @@ if (searchForm) {
   });
 }
 
-// Note: Removed keydown Enter handler; form submit already covers Enter.
 // Double-binding can overwrite results.
 
-// update suggestions + popular list
+// click outside of suggestions or input removes suggestions und brings back popular movies
 if (searchInput) {
   searchInput.addEventListener("input", () => {
     inputEvent(searchInput, popularList);
   });
 }
 
-// Click outside suggestions hides suggestions and restores popular movies
+// Click outside input/suggestions hides suggestions and restores popular movies
 document.addEventListener("click", (e) => {
   if (!searchInput || !searchSuggestions) return;
   if (e.target === searchInput) return;
@@ -151,7 +153,9 @@ document.addEventListener("click", (e) => {
   hideSuggest();
 });
 
-// ---- Hero Carousel Functions
+// ------------ end rm --------
+
+// Hero Carousel Functions
 
 function goToSlide(index) {
   if (!heroCarousel || totalSlides === 0) return;
@@ -177,7 +181,7 @@ function startAutoSlide() {
   stopAutoSlide();
   autoSlideInterval = setInterval(() => {
     goToSlide(currentSlide + 1);
-  }, 5000);
+  }, 5000); // Change slide every 5 seconds
 }
 
 function stopAutoSlide() {
@@ -214,6 +218,7 @@ async function initHeroCarousel() {
       });
       heroCarousel.appendChild(item);
 
+      // Create indicator
       const indicator = document.createElement("button");
       indicator.className = `w-3 h-3 rounded-full transition-colors ${
         index === 0 ? "bg-sand" : "bg-navy/30"
@@ -226,7 +231,7 @@ async function initHeroCarousel() {
       carouselIndicators.appendChild(indicator);
     });
 
-    // Navigation buttons
+    // Set up navigation buttons
     if (carouselPrev) {
       carouselPrev.addEventListener("click", () => {
         goToSlide(currentSlide - 1);
@@ -243,9 +248,9 @@ async function initHeroCarousel() {
       });
     }
 
-    // Auto slide + pause on hover
+    // Start auto-slide
     startAutoSlide();
-
+    // Pause on hover
     heroCarousel.addEventListener("mouseenter", stopAutoSlide);
     heroCarousel.addEventListener("mouseleave", startAutoSlide);
   } catch (e) {
