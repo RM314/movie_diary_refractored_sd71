@@ -2,6 +2,7 @@ import "./style.css";
 import { fetchPopular, searchMovies, fetchNowPlaying } from "./tmdb.js";
 import { addToFavs } from "./storage.js";
 import { movieCard, heroCarouselItem } from "./ui.js";
+import { initBurgerMenu } from "./burger.js";
 
 // ---- start rm
 import { inputEvent, hideSuggest } from "./int_search.js";
@@ -205,3 +206,4 @@ async function initHeroCarousel() {
 // Initialize
 initHeroCarousel();
 initPopular();
+initBurgerMenu();
