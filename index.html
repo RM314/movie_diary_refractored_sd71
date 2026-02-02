@@ -5,41 +5,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Movie Diary</title>
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
   <!-- Google Fonts Preconnect -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <!-- Gowun Dodum Font -->
   <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
-  <!-- Tailwind Configuration -->
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          // Custom font family
-          fontFamily: {
-            'gowun': ['"Gowun Dodum"', 'sans-serif'],
-          },
-          // Custom color palette
-          colors: {
-            'navy': '#264653',
-            'teal': '#2A9D8F',
-            'sand': '#E9C46A',
-            'orange': '#F4A261',
-            'coral': '#E76F51',
-          }
-        }
-      }
-    }
-  </script>
-  <!-- Global Font Style -->
-  <style>
-    * {
-      font-family: 'Gowun Dodum', sans-serif;
-    }
-  </style>
-  -->
 </head>
 
 <body class="bg-white text-navy font-gowun">
@@ -52,22 +22,56 @@
       </a>
 
       <!-- Navigation Links -->
-      <div class="flex items-center gap-4 sm:gap-6 order-last sm:order-0 w-full sm:w-auto justify-center">
+      <!-- ############################################################################## -->
+      <div class="hidden sm:flex items-center gap-6 order-last sm:order-none w-full sm:w-auto justify-center">
+      <!-- ############################################################################## -->
         <a href="index.html" class="text-sm hover:text-teal transition-colors">Home</a>
         <a href="journal.html" class="text-sm hover:text-teal transition-colors">Journal</a>
       </div>
 
+<!-- ############################################################################## -->
+    <!-- Burger  -->
+    <button
+      id="burgerBtn"
+      class="sm:hidden inline-flex items-center justify-center rounded-md p-2 hover:bg-sand"
+      type="button"
+    >
+      <!-- simple icon -->
+      <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </button>
+
+    <!-- Mobile Dropdown Menu  -->
+    <div
+      id="mobileMenu"
+      class="hidden sm:hidden w-full order-last border-t border-navy/20 pt-3"
+    >
+      <div class="flex flex-col gap-2">
+        <a href="index.html" class="py-2 text-sm hover:text-teal transition-colors">Home</a>
+        <a href="journal.html" class="py-2 text-sm hover:text-teal transition-colors">Journal</a>
+      </div>
+    </div>
+    <!-- ############################################################################## -->
+
+
       <!-- Search Form -->
-      <div class="relative shrink-0">
-        <form id="searchForm" class="flex">
+     <div class="relative w-full sm:w-auto">
+      <form id="searchForm" class="flex flex-col sm:flex-row gap-4 w-full">
           <input id="searchInput"
-            class="w-32 sm:w-48 min-w-25 bg-sand border-none rounded px-3 py-2 text-sm text-navy placeholder-navy/60"
+            class="w-full sm:w-48 bg-sand border-none rounded px-3 py-2 text-sm text-navy placeholder-navy/60"
             placeholder="Search Movies" required />
+            <button class="w-full sm:w-auto rounded-lg bg-slate-900 text-white px-4 py-2 text-sm hover:bg-slate-800"> Search </button>
+
+
         </form>
         <!-- Search Suggestions Dropdown (hidden by default) -->
         <div id="searchSuggestions"
-          class="absolute left-0 right-0 mt-2 hidden border border-navy rounded-md bg-white z-50"></div>
-      </div>
+          class="absolute left-0 right-0 mt-2 hidden border border-navy rounded-md bg-white z-50">
+        </div>
+     </div>
+
+
     </div>
   </nav>
 

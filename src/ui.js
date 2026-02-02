@@ -16,7 +16,7 @@ export function movieCard(movie, { onFavClick, favLabel = "Add to favourites" } 
   // 2/2 Body section - flex-1 makes it take remaining space, pushing button to bottom
   const body = document.createElement("div");
   body.className = "p-4 flex flex-col gap-2 flex-1";
-  
+
   body.appendChild(movieTextContent(movie));
 
   if (onFavClick) {
@@ -42,7 +42,8 @@ export function heroCarouselItem(movie, { onFavClick } = {}) {
   body.appendChild(movieTextContent(movie));
 
   if (onFavClick) {
-    const fav = addToFavoritesButton(movie, onFavClick);
+    // without middle parameter wrong interpretation of function
+    const fav = addToFavoritesButton(movie,{ width: "w-fit" }, onFavClick);
     body.appendChild(fav);
   }
 

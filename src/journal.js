@@ -2,6 +2,7 @@ import "./style.css";
 import { loadFavs, removeFromFavs, updateNote } from "./storage.js";
 import { moviePoster } from "../components/moviePoster.js";
 import { movieTextContent } from "../components/movieTextContent.js";
+import { initBurgerMenu } from "./burger.js";
 
 const favList = document.querySelector("#favList");
 
@@ -20,6 +21,7 @@ function renderFavs() {
 }
 
 renderFavs();
+initBurgerMenu();
 
 function journalMovieCard(movie) {
   // list item..
