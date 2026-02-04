@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+/* Tailwind v4 Theme Tokens */
+@theme {
+  --color-navy: #264653;
+  --color-teal: #2A9D8F;
+  --color-sand: #E9C46A;
+  --color-orange: #F4A261;
+  --color-coral: #E76F51;
+
+  --font-gowun: "Gowun Dodum", sans-serif;
+}

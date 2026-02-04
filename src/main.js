@@ -1,6 +1,8 @@
+import "./style.css";
 import { fetchPopular, searchMovies, fetchNowPlaying } from "./tmdb.js";
 import { addToFavs } from "./storage.js";
 import { movieCard, heroCarouselItem } from "./ui.js";
+import { initBurgerMenu } from "./burger.js";
 
 // ---- start rm
 import { inputEvent, hideSuggest } from "./int_search.js";
@@ -117,10 +119,10 @@ function goToSlide(index) {
   if (index < 0) index = totalSlides - 1;
   if (index >= totalSlides) index = 0;
   currentSlide = index;
-  
+
   const slideWidth = heroCarousel.querySelector('.carousel-item')?.offsetWidth || 0;
   heroCarousel.scrollTo({ left: slideWidth * currentSlide, behavior: 'smooth' });
-  
+
   // Update indicators
   const indicators = carouselIndicators.querySelectorAll('button');
   indicators.forEach((ind, i) => {
@@ -148,10 +150,10 @@ async function initHeroCarousel() {
     const data = await fetchNowPlaying();
     const movies = (data.results || []).slice(0, 5); // Limit to 5 movies
     totalSlides = movies.length;
-    
+
     heroCarousel.innerHTML = '';
     carouselIndicators.innerHTML = '';
-    
+
     movies.forEach((movie, index) => {
       const item = heroCarouselItem(movie, {
         onFavClick: (m) => {
@@ -163,7 +165,7 @@ async function initHeroCarousel() {
         }
       });
       heroCarousel.appendChild(item);
-      
+
       // Create indicator
       const indicator = document.createElement('button');
       indicator.className = `w-3 h-3 rounded-full transition-colors ${index === 0 ? 'bg-sand' : 'bg-navy/30'}`;
@@ -174,27 +176,27 @@ async function initHeroCarousel() {
       });
       carouselIndicators.appendChild(indicator);
     });
-    
+
     // Set up navigation buttons
     carouselPrev.addEventListener('click', () => {
       goToSlide(currentSlide - 1);
       stopAutoSlide();
       startAutoSlide();
     });
-    
+
     carouselNext.addEventListener('click', () => {
       goToSlide(currentSlide + 1);
       stopAutoSlide();
       startAutoSlide();
     });
-    
+
     // Start auto-slide
     startAutoSlide();
-    
+
     // Pause on hover
     heroCarousel.addEventListener('mouseenter', stopAutoSlide);
     heroCarousel.addEventListener('mouseleave', startAutoSlide);
-    
+
   } catch (e) {
     heroCarousel.innerHTML = `<div class="text-sm text-coral p-4">Failed to load carousel.</div>`;
     console.error(e);
@@ -204,3 +206,4 @@ async function initHeroCarousel() {
 // Initialize
 initHeroCarousel();
 initPopular();
+initBurgerMenu();
